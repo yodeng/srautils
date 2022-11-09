@@ -1,0 +1,3 @@
+cython
+hget @ git+https://github.com/yodeng/hget.git@master
+runjob @ git+https://github.com/yodeng/runjob.git@master
