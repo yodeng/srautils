@@ -83,7 +83,7 @@ def sraArgs():
     fetch_args.add_argument(
         '-o', "--outdir", help='output sra directory, current dir by default', default=os.getcwd(), metavar="<str>")
     fetch_args.add_argument(
-        '-n', "--num", help='the max number of concurrency, 100 by default', type=int, default=100, metavar="<int>")
+        '-n', "--num", help='the max number of concurrency, default: auto', type=int, metavar="<int>")
     fetch_args.add_argument("-s", "--max-speed", help="specify maximum speed per second, case-insensitive unit support (K[b], M[b]...), no-limited by default",
                             metavar="<str>")
     dump_args = subparsers.add_parser('dump', help='dump sra into fastq')
