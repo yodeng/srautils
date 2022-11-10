@@ -8,6 +8,7 @@ import signal
 import shutil
 import argparse
 import tempfile
+import subprocess
 
 import hget.utils as hutils
 
@@ -62,6 +63,15 @@ def is_exe(file_path):
     )
 
 
+def check_cmd(cmd=None):
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = p.communicate()
+    if p.returncode != 0:
+        print((stdout + stderr).decode())
+        return False
+    return True
+
+
 def canonicalize(path):
     return os.path.abspath(os.path.expanduser(path))
 
@@ -77,16 +87,17 @@ def sraArgs():
     subparsers = parser.add_subparsers(
         title="commands", dest="command", help="sub-command help")
     fetch_args = subparsers.add_parser(
-        'fetch', help='fetch raw fastq sra data by sra-id')
+        'fetch', help='fetch raw sra data by SRA accession id')
     fetch_args.add_argument(
-        '-i', "--id", help='input sra-id, SRR/ERR/DRR allowed, required', required=True, metavar="<str>")
+        '-i', "--id", help='input SRA accession id, SRR/ERR/DRR allowed, required', required=True, metavar="<str>")
     fetch_args.add_argument(
         '-o', "--outdir", help='output sra directory, current dir by default', default=os.getcwd(), metavar="<str>")
     fetch_args.add_argument(
         '-n', "--num", help='the max number of concurrency, default: auto', type=int, metavar="<int>")
     fetch_args.add_argument("-s", "--max-speed", help="specify maximum speed per second, case-insensitive unit support (K[b], M[b]...), no-limited by default",
                             metavar="<str>")
-    dump_args = subparsers.add_parser('dump', help='dump sra into fastq')
+    dump_args = subparsers.add_parser(
+        'dump', help='dump sra into fastq/fasta sequence file')
     dump_args.add_argument("-i", "--input", type=str, required=True,
                            help='input sra file, required', metavar="<file>")
     dump_args.add_argument("-o", "--outdir", type=str, default=os.getcwd(),
