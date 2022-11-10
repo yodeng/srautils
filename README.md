@@ -50,7 +50,7 @@ commands:
 
 The `fetch` command is used for download SRA file by only giving an accession SRA id, it's a rapid and interruptable download accelerator.
 
-All original SRA files are obtained directly from AWS Cloud with `UNSIGNED` assess. This tools split the whole download into many pieces and record the progress for each chunk in a `*.ht` binary file, this can significantly speed up the download. Auto resume can be running by loading the progress file if any interruption. Command help as follows:
+All original SRA files are obtained directly from AWS Cloud with `UNSIGNED` access. This tools split the whole download into many pieces and record the progress of each chunk in a `*.ht` binary file, this can significantly speed up the download. Auto resume can be running by loading the progress file if any interruption. Command help as follows:
 
 ```
 $ srautils fetch -h 
@@ -79,7 +79,7 @@ optional arguments:
 
 The `dump` command is a parallel `fastq-dump` wrapper which used for dump SRA file and get the raw `fastq/fasta` sequence data as output. 
 
-NCBI `fastq-dump` is very slow,  even if you have high machine resources (network, IO, CPU). This tool speeds up the process by dividing the work into multiple jobs and runing all chunked jobs parallelly in localhost or sge cluster (default) environment. After chunk jobs finished, all resuslts will be concatenate together. The command usage below here:
+NCBI `fastq-dump` is very slow,  even if you have high machine resources (network, IO, CPU). This tool speeds up the process by dividing the work into multiple jobs and runing all chunked jobs parallelly in localhost or sge cluster (default) environment. After chunk jobs finished, all resuslts will be concatenated together. The command usage below here:
 
 ```
 $ srautils dump -h 

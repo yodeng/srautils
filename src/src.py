@@ -44,11 +44,17 @@ class sraDumps(object):
             if i == self.chunks-1:
                 self.spot_chunks[i][1] += total % self.chunks
 
+    def _check_sra_bin(self):
+        for path in [which("sra-stat"), which("fastq-dump")]:
+            if not path:
+                raise SraArgumentsError("sratoolkit not found in $PATH")
+            if not check_cmd([path, "--version"]):
+                raise SraArgumentsError("sratoolkit installation has not been configured, please run '%s --interactive'" %
+                                        os.path.join(os.path.dirname(path), "vdb-config"))
+
     @property
     def get_total_spot(self):
         stat_exe = which("sra-stat")
-        if not stat_exe:
-            raise SraArgumentsError("sratoolkit not found in $PATH")
         cmd = " ".join([stat_exe, '--meta', '--quick', self.srafile])
         total = 0
         with os.popen(cmd) as fi:
@@ -59,8 +65,6 @@ class sraDumps(object):
     def write_shell(self):
         mkdir(os.path.dirname(self.dump_scripts))
         dumps_exe = which("fastq-dump")
-        if not dumps_exe:
-            raise SraArgumentsError("sratoolkit not found in $PATH")
         self.chunk_res = []
         with open(self.dump_scripts, "w") as fo:
             for n, pos in enumerate(self.spot_chunks):
@@ -119,6 +123,7 @@ class sraDumps(object):
                 self.dumpdir.cleanup()
 
     def run(self):
+        self._check_sra_bin()
         self.split_blocks()
         self.write_shell()
         self.run_dumps()
