@@ -129,7 +129,7 @@ class sraDownload(object):
     def __init__(self, args=None):
         self.args = args
         self.sraid = args.id.upper()
-        self.threads = min(args.num, 300)
+        self.threads = args.num
         self.outdir = args.outdir
         self.speed = args.max_speed
 
@@ -157,8 +157,12 @@ class sraDownload(object):
             mkdir(self.outdir)
             outpath = os.path.join(self.outdir, self.sraid + ".sra")
             log = hutils.loger()
-            hget(url=self.url, outfile=outpath,
-                 max_speed=self.speed, threads=self.threads)
+            kwargs = {}
+            kwargs.update(url=self.url, outfile=outpath,
+                          max_speed=self.speed)
+            if self.threads:
+                kwargs.update(threads=min(self.threads, 300))
+            hget(**kwargs)
 
     def _check_url(self):
         client = hutils.client('s3', config=hutils.Config(signature_version=hutils.UNSIGNED,
