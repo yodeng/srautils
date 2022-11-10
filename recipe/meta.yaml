@@ -15,7 +15,7 @@ source:
 
 requirements:
     host:
-        - python
+        - python >=3.8
         - cython
         - pip
     run:
