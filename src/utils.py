@@ -13,6 +13,7 @@ import subprocess
 import hget.utils as hutils
 
 from hget import hget
+from lxml import etree
 from runjob.config import Config
 from runjob.sge_run import RunSge
 from runjob.sge import ParseSingal
@@ -26,8 +27,7 @@ class SraArgumentsError(Exception):
 
 
 def mkdir(path):
-    if not os.path.isdir(path):
-        os.makedirs(path)
+    os.makedirs(path, exist_ok=True)
 
 
 def which(program, paths=None):
