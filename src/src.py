@@ -15,12 +15,6 @@ class sraDumps(object):
         self.outdir = os.path.abspath(args.outdir)
         if not os.path.isfile(self.srafile):
             raise SraArgumentsError("No such sra file: %s" % self.args.input)
-        mkdir(self.outdir)
-        self.dumpdir = tempfile.TemporaryDirectory(
-            dir=self.outdir, prefix="srautils_")
-        self.chunkdir = os.path.join(self.dumpdir.name, "chunks")
-        self.logdir = os.path.join(self.dumpdir.name, "logs")
-        self.dump_scripts = os.path.join(self.dumpdir.name, "sra_dumps.sh")
         self.args.mode = "sge"
         if self.args.local:
             self.args.mode = "local"
@@ -28,21 +22,19 @@ class sraDumps(object):
         self.args.num = self.chunks
         self.args.cpu = 1
         self.args.memory = 1
-        self.args.logdir = self.logdir
         self.args.workdir = os.getcwd()
         self.args.startline = 0
         self.args.groups = 1
         self.loger = sraLog(self.args.log, "info", name=RunSge.__module__)
 
-    def split_blocks(self):
-        total = self.get_total_spot
-        avg = int(total / self.chunks)
-        last = 1
-        for i in range(0, self.chunks):
-            self.spot_chunks.append([last, last + avg-1])
-            last += avg
-            if i == self.chunks-1:
-                self.spot_chunks[i][1] += total % self.chunks
+    def split_chunks(self):
+        total = self.total_spot
+        size = total // self.chunks
+        s = 1
+        for i in range(self.chunks):
+            self.spot_chunks.append([s, s + size - 1])
+            s += size
+        self.spot_chunks[-1][1] = total
 
     def _check_sra_bin(self):
         for path in [which("sra-stat"), which("fastq-dump")]:
@@ -53,16 +45,21 @@ class sraDumps(object):
                                         os.path.join(os.path.dirname(path), "vdb-config"))
 
     @property
-    def get_total_spot(self):
+    def total_spot(self):
         stat_exe = which("sra-stat")
-        cmd = " ".join([stat_exe, '--meta', '--quick', self.srafile])
+        cmd = shlex.join([stat_exe, '--meta', '--quick', "-x", self.srafile])
         total = 0
         with os.popen(cmd) as fi:
-            for line in fi:
-                total += int(line.split('|')[2].split(':')[0])
+            html = etree.HTML(fi.read())
+            total += int(html.xpath("//@spot_count")[0])
         return total
 
     def write_shell(self):
+        mkdir(self.outdir)
+        self.dumpdir = tempfile.TemporaryDirectory(
+            dir=self.outdir, prefix="srautils_")
+        self.chunkdir = os.path.join(self.dumpdir.name, "chunks")
+        self.dump_scripts = os.path.join(self.dumpdir.name, "sra_dumps.sh")
         mkdir(os.path.dirname(self.dump_scripts))
         dumps_exe = which("fastq-dump")
         self.chunk_res = []
@@ -82,11 +79,11 @@ class sraDumps(object):
 
     def run_dumps(self):
         self.args.jobfile = self.dump_scripts
+        self.args.logdir = os.path.join(self.dumpdir.name, "logs")
         self.args.force = True
         conf = Config()
         conf.update_dict(**self.args.__dict__)
         if os.path.isfile(self.dump_scripts):
-            mkdir(self.logdir)
             srajobs = RunSge(config=conf)
             h = ParseSingal(obj=srajobs, name=self.args.jobname,
                             mode=self.args.mode, conf=conf)
@@ -124,7 +121,7 @@ class sraDumps(object):
 
     def run(self):
         self._check_sra_bin()
-        self.split_blocks()
+        self.split_chunks()
         self.write_shell()
         self.run_dumps()
         self.mergs_res()

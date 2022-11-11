@@ -22,6 +22,7 @@ requirements:
         - sratoolkit
         - runjob
         - hget
+        - lxml
 
 about:
     home: https://github.com/yodeng/srautils
