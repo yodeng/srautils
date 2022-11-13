@@ -57,7 +57,7 @@ class sraDumps(object):
     def write_shell(self):
         mkdir(self.outdir)
         self.dumpdir = tempfile.TemporaryDirectory(
-            dir=self.outdir, prefix="srautils_")
+            dir=self.outdir, prefix=".srautils_")
         self.chunkdir = os.path.join(self.dumpdir.name, "chunks")
         self.dump_scripts = os.path.join(self.dumpdir.name, "sra_dumps.sh")
         mkdir(os.path.dirname(self.dump_scripts))
@@ -167,10 +167,12 @@ class sraDownload(object):
             hget(**kwargs)
 
     def _check_url(self):
-        client = hutils.client('s3', config=hutils.Config(signature_version=hutils.UNSIGNED,
-                                                          max_pool_connections=hutils.MAX_S3_CONNECT+1, connect_timeout=30))
+        client = hutils.client('s3', config=hutils.Config(
+            signature_version=hutils.UNSIGNED, connect_timeout=30))
         try:
             client.head_object(Bucket=self.bucket, Key=self.key)
             return True
         except:
             return False
+        finally:
+            client.close()
