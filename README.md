@@ -75,6 +75,8 @@ optional arguments:
 | -n/--num       | the max number of concurrency, auto detect by sra file size  |
 | -s/--max-speed | maximum speed per second, case-insensitive unit support (K[b], M[b]...), no-limited by default |
 
+![fetch](https://user-images.githubusercontent.com/18365846/201565539-4df7ee9e-0a44-4786-8a90-1fd2e78d4ab5.png)
+
 #### 3.2 srautils dump
 
 The `dump` command is a parallel `fastq-dump` wrapper which used for dump SRA file and get the raw `fastq/fasta` sequence data as output. 
@@ -113,6 +115,8 @@ optional arguments:
 | --no-gzip    | do not gzip output, gzip output by default                   |
 | --fasta      | output fasta instead of fastq                                |
 | --local      | running all chunked jobs in localhost instead of sge cluster |
+
+![dump](https://user-images.githubusercontent.com/18365846/201566132-b3d8e0d3-426e-44f5-b9d6-6db58020dbff.png)
 
 ### 4. License
 
