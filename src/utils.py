@@ -6,6 +6,7 @@ import sys
 import shlex
 import signal
 import shutil
+import weakref
 import argparse
 import tempfile
 import subprocess
@@ -24,6 +25,31 @@ from ._version import __version__
 
 class SraArgumentsError(Exception):
     pass
+
+
+class TempDir(object):
+    def __init__(self, suffix=None, prefix=None, dir=None, persistent=False):
+        self.persistent = persistent
+        self.name = tempfile.mkdtemp(suffix, prefix, dir)
+        self._finalizer = weakref.finalize(
+            self, self._cleanup, self.name)
+
+    def _cleanup(self, name):
+        if not self.persistent:
+            shutil.rmtree(name)
+
+    def __repr__(self):
+        return "<{} {!r}>".format(self.__class__.__name__, self.name)
+
+    def __enter__(self):
+        return self.name
+
+    def __exit__(self, exc, value, tb):
+        self._cleanup()
+
+    def cleanup(self):
+        if self._finalizer.detach():
+            shutil.rmtree(self.name)
 
 
 def mkdir(path):
@@ -111,7 +137,7 @@ def sraArgs():
     dump_args.add_argument("--no-gzip", action='store_true', default=False,
                            help="do not compress output")
     dump_args.add_argument("--fasta", action='store_true', default=False,
-                           help="fasta only")
+                           help="output fasta only")
     dump_args.add_argument("--local", action='store_true',
                            help="run sra-dumps in localhost instead of sge", default=False)
     return parser.parse_args()
