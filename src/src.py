@@ -60,7 +60,6 @@ class sraDumps(object):
             dir=self.outdir, prefix=".srautils_")
         self.chunkdir = os.path.join(self.dumpdir.name, "chunks")
         self.dump_scripts = os.path.join(self.dumpdir.name, "sra_dumps.sh")
-        mkdir(os.path.dirname(self.dump_scripts))
         dumps_exe = which("fastq-dump")
         self.chunk_res = []
         with open(self.dump_scripts, "w") as fo:
