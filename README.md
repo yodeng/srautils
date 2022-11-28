@@ -85,36 +85,40 @@ NCBI `fastq-dump` is very slow,  even if you have high machine resources (networ
 
 ```
 $ srautils dump -h 
-usage: srautils dump [-h] -i <file> [-o <dir>] [-p <int>] [-q [<str> ...]] [-l <file>] [--no-gzip] [--fasta] [--local]
+usage: srautils dump [-h] -i <file> [-p <int>] [-l <file>] [--local] [-o <dir>] [--no-gzip] [--fasta] [-q [<str> ...]]
 
 optional arguments:
   -h, --help            show this help message and exit
   -i <file>, --input <file>
                         input sra file, required
-  -o <dir>, --outdir <dir>
-                        output directory, current dir by default
   -p <int>, --processes <int>
                         number of dumps processors, 10 by default
-  -q [<str> ...], --queue [<str> ...]
-                        sge queue, multi-queue can be sepreated by whitespace, all.q by default
   -l <file>, --log <file>
                         append srautils log info to file, stdout by default
-  --no-gzip             do not compress output
-  --fasta               fasta only
   --local               run sra-dumps in localhost instead of sge
+
+output arguments:
+  -o <dir>, --outdir <dir>
+                        output directory, current dir by default
+  --no-gzip             do not compress output
+  --fasta               output fasta only
+
+sge arguments:
+  -q [<str> ...], --queue [<str> ...]
+                        sge queue, multi-queue can be sepreated by whitespace, all.q by default
 ```
 
 | options      | descriptions                                                 |
 | ------------ | ------------------------------------------------------------ |
 | -h/--help    | show this help message and exit                              |
 | -i/--input   | input sra file                                               |
-| -o/--output  | output directory                                             |
 | -p/--process | divide chunks number, 10 by default                          |
-| -q/--queue   | running all chunked jobs in sge queue if set,  `all.q` by default |
 | -l/--log     | process logging file, stdout by default                      |
+| --local      | running all chunked jobs in localhost instead of sge cluster |
+| -o/--output  | output directory                                             |
 | --no-gzip    | do not gzip output, gzip output by default                   |
 | --fasta      | output fasta instead of fastq                                |
-| --local      | running all chunked jobs in localhost instead of sge cluster |
+| -q/--queue   | running all chunked jobs in sge queue if set,  `all.q` by default |
 
 ![dump](https://user-images.githubusercontent.com/18365846/201566132-b3d8e0d3-426e-44f5-b9d6-6db58020dbff.png)
 
