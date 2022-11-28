@@ -111,7 +111,7 @@ def sraArgs():
     parser.add_argument("-v", '--version',
                         action='version', version="v" + __version__)
     subparsers = parser.add_subparsers(
-        title="commands", dest="command", help="sub-command help")
+        metavar="command", dest="command")
     fetch_args = subparsers.add_parser(
         'fetch', help='fetch raw sra data by SRA accession id')
     fetch_args.add_argument(
@@ -126,18 +126,21 @@ def sraArgs():
         'dump', help='dump sra into fastq/fasta sequence file')
     dump_args.add_argument("-i", "--input", type=str, required=True,
                            help='input sra file, required', metavar="<file>")
-    dump_args.add_argument("-o", "--outdir", type=str, default=os.getcwd(),
-                           help='output directory, current dir by default', metavar="<dir>")
     dump_args.add_argument("-p", "--processes", type=int, default=10,
                            help='number of dumps processors, 10 by default', metavar="<int>")
-    dump_args.add_argument("-q", "--queue", type=str, default=["all.q", ],
-                           help='sge queue, multi-queue can be sepreated by whitespace, all.q by default', nargs="*", metavar="<str>")
     dump_args.add_argument("-l", "--log", type=str,
                            help='append srautils log info to file, stdout by default', metavar="<file>")
-    dump_args.add_argument("--no-gzip", action='store_true', default=False,
-                           help="do not compress output")
-    dump_args.add_argument("--fasta", action='store_true', default=False,
-                           help="output fasta only")
     dump_args.add_argument("--local", action='store_true',
                            help="run sra-dumps in localhost instead of sge", default=False)
+    output_group = dump_args.add_argument_group("output arguments")
+    output_group.add_argument("-o", "--outdir", type=str, default=os.getcwd(),
+                              help='output directory, current dir by default', metavar="<dir>")
+
+    output_group.add_argument("--no-gzip", action='store_true', default=False,
+                              help="do not compress output")
+    output_group.add_argument("--fasta", action='store_true', default=False,
+                              help="output fasta only")
+    sge_group = dump_args.add_argument_group("sge arguments")
+    sge_group.add_argument("-q", "--queue", type=str, default=["all.q", ],
+                           help='sge queue, multi-queue can be sepreated by whitespace, all.q by default', nargs="*", metavar="<str>")
     return parser.parse_args()
