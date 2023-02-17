@@ -28,6 +28,7 @@ class SraArgumentsError(Exception):
 
 
 class TempDir(object):
+
     def __init__(self, suffix=None, prefix=None, dir=None, persistent=False):
         self.persistent = persistent
         self.name = tempfile.mkdtemp(suffix, prefix, dir)
@@ -45,7 +46,7 @@ class TempDir(object):
         return self.name
 
     def __exit__(self, exc, value, tb):
-        self._cleanup()
+        self.cleanup()
 
     def cleanup(self):
         if self._finalizer.detach():
