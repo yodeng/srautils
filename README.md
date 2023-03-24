@@ -32,18 +32,18 @@ srautils include `srautils fetch` and `srautils dump` sub-commands.
 
 ```
 $ srautils -h 
-usage: srautils [-h] [-v] {fetch,dump} ...
+usage: srautils [-h] [-v] command ...
 
 fast utils for fetch and dump SRA archive raw fastq data
+
+positional arguments:
+  command
+    fetch        fetch raw sra data by SRA accession id
+    dump         dump sra into fastq/fasta sequence file
 
 optional arguments:
   -h, --help     show this help message and exit
   -v, --version  show program's version number and exit
-
-commands:
-  {fetch,dump}   sub-command help
-    fetch        fetch raw fastq sra data by sra-id
-    dump         dump sra into fastq
 ```
 
 #### 3.1 srautils fetch

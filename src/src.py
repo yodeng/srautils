@@ -84,9 +84,7 @@ class sraDumps(object):
         conf.update_dict(**self.args.__dict__)
         if os.path.isfile(self.dump_scripts):
             srajobs = RunSge(config=conf)
-            h = ParseSingal(obj=srajobs, name=self.args.jobname,
-                            mode=self.args.mode, conf=conf)
-            h.start()
+            srajobs.set_rate(20)
             srajobs.run(times=0)
             if not srajobs.sumstatus():
                 os.kill(os.getpid(), signal.SIGTERM)
