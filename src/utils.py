@@ -15,10 +15,9 @@ import hget.utils as hutils
 
 from hget import hget
 from lxml import etree
+from runjob import runsge
+from runjob import log as sraLog
 from runjob.config import Config
-from runjob.sge_run import RunSge
-from runjob.sge import ParseSingal
-from runjob.utils import Mylog as sraLog
 
 from ._version import __version__
 

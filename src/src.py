@@ -15,6 +15,10 @@ class sraDumps(object):
         self.outdir = os.path.abspath(args.outdir)
         if not os.path.isfile(self.srafile):
             raise SraArgumentsError("No such sra file: %s" % self.args.input)
+        self._create_sge_args()
+        self.loger = sraLog(self.args.log, "info", name=runsge.__module__)
+
+    def _create_sge_args(self):
         self.args.mode = "sge"
         if self.args.local:
             self.args.mode = "local"
@@ -25,7 +29,6 @@ class sraDumps(object):
         self.args.workdir = os.getcwd()
         self.args.startline = 0
         self.args.groups = 1
-        self.loger = sraLog(self.args.log, "info", name=RunSge.__module__)
 
     def split_chunks(self):
         total = self.total_spot
@@ -83,11 +86,9 @@ class sraDumps(object):
         conf = Config()
         conf.update_dict(**self.args.__dict__)
         if os.path.isfile(self.dump_scripts):
-            srajobs = RunSge(config=conf)
+            srajobs = runsge(config=conf)
             srajobs.set_rate(20)
             srajobs.run(times=0)
-            if not srajobs.sumstatus():
-                os.kill(os.getpid(), signal.SIGTERM)
 
     def mergs_res(self):
         if len(self.chunk_res):
