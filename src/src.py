@@ -88,7 +88,7 @@ class sraDumps(object):
         if os.path.isfile(self.dump_scripts):
             srajobs = runsge(config=conf)
             srajobs.set_rate(20)
-            srajobs.run(times=0)
+            srajobs.run()
 
     def mergs_res(self):
         if len(self.chunk_res):
