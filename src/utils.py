@@ -135,12 +135,11 @@ def sraArgs():
     output_group = dump_args.add_argument_group("output arguments")
     output_group.add_argument("-o", "--outdir", type=str, default=os.getcwd(),
                               help='output directory, current dir by default', metavar="<dir>")
-
     output_group.add_argument("--no-gzip", action='store_true', default=False,
                               help="do not compress output")
     output_group.add_argument("--fasta", action='store_true', default=False,
                               help="output fasta only")
     sge_group = dump_args.add_argument_group("sge arguments")
-    sge_group.add_argument("-q", "--queue", type=str, default=["all.q", ],
-                           help='sge queue, multi-queue can be sepreated by whitespace, all.q by default', nargs="*", metavar="<str>")
+    sge_group.add_argument("-q", "--queue", type=str,
+                           help='sge queue, multi-queue can be sepreated by whitespace, all accessed queue by default', nargs="*", metavar="<str>")
     return parser.parse_args()
