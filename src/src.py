@@ -7,6 +7,7 @@ __all__ = ["sraDownload", "sraDumps", "sraArgs"]
 
 
 class sraDumps(object):
+
     def __init__(self, args=None):
         self.args = args
         self.srafile = os.path.abspath(args.input)
@@ -84,7 +85,7 @@ class sraDumps(object):
         self.args.logdir = os.path.join(self.dumpdir.name, "logs")
         self.args.force = True
         conf = Config()
-        conf.update_dict(**self.args.__dict__)
+        conf.update_dict(self.args)
         if os.path.isfile(self.dump_scripts):
             srajobs = runsge(config=conf)
             srajobs.set_rate(20)
@@ -93,7 +94,6 @@ class sraDumps(object):
     def mergs_res(self):
         if len(self.chunk_res):
             dumpfiles = []
-            self.loger.info("merge sra dumps file")
             outfiles = sorted(os.listdir(self.chunk_res[0]))
             for outfile in outfiles:
                 if (self.args.no_gzip and outfile.endswith(".gz")) or \
@@ -126,6 +126,7 @@ class sraDumps(object):
 
 
 class sraDownload(object):
+
     def __init__(self, args=None):
         self.args = args
         self.sraid = args.id.upper()
